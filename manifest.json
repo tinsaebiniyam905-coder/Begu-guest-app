@@ -1,0 +1,34 @@
+
+{
+  "short_name": "BeguGuest",
+  "name": "ቤጉ እንግዳ - Begu Guest Registration",
+  "description": "የቤንሻንጉል ጉምዝ ፖሊስ ሆቴል እንግዶች መቆጣጠሪያ",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1067/1067357.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1067/1067357.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#1e3a8a",
+  "background_color": "#ffffff",
+  "categories": ["security", "business", "productivity"],
+  "screenshots": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1067/1067357.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ]
+}
