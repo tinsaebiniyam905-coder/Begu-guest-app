@@ -1,5 +1,7 @@
+
 {
   "name": "ቤጉ እንግዳ (Begu Guest)",
+  "short_name": "BeguGuest",
   "description": "የቤንሻንጉል ጉምዝ ፖሊስ ሆቴል እንግዶች መቆጣጠሪያ ሲስተም - በቤንሻንጉል ጉምዝ ፖሊስ ኮሚሽን የተገነባ",
   "requestFramePermissions": [
     "camera"

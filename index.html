@@ -14,36 +14,55 @@
     <style>
         body { 
           font-family: 'Noto Sans Ethiopic', sans-serif; 
-          background-color: #f8fafc; 
+          background-color: #f1f5f9; 
           margin: 0; 
           scroll-behavior: smooth;
+          color: #1e293b;
         }
         #loading-screen {
             position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: #ffffff; z-index: 9999; transition: opacity 0.5s ease; text-align: center;
+            background: #ffffff; z-index: 9999; transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1); text-align: center;
         }
         .spinner {
-            border: 4px solid #f3f3f3; border-top: 4px solid #1e3a8a; border-radius: 50%;
-            width: 60px; height: 60px; animation: spin 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite; margin-bottom: 24px;
+            border: 6px solid #f1f5f9; border-top: 6px solid #1e3a8a; border-radius: 50%;
+            width: 80px; height: 80px; animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite; margin-bottom: 32px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .loaded #loading-screen { opacity: 0; pointer-events: none; }
         
         @media print {
-            body { background: white; }
+            body { background: white !important; padding: 0 !important; margin: 0 !important; }
             button, .no-print, header, footer:not(.print-footer) { display: none !important; }
             .print-block { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
-            table { width: 100% !important; border-collapse: collapse !important; }
-            th, td { border: 1px solid #ddd !important; padding: 12px !important; }
-            thead { display: table-header-group !important; }
+            table { width: 100% !important; border-collapse: collapse !important; margin-top: 20px !important; }
+            th, td { border: 2px solid #000 !important; padding: 15px !important; color: #000 !important; }
+            thead { display: table-header-group !important; background-color: #eee !important; color: #000 !important; }
             tr { page-break-inside: avoid !important; }
+            img { max-width: 150px !important; border: 1px solid #000 !important; }
         }
         
-        /* Custom scrollbar for professional feel */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        /* Professional UI Polish */
+        .glass-panel {
+          background: rgba(255, 255, 255, 0.8);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+        }
+        
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #1e3a8a; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #1e3a8a; border-radius: 20px; border: 3px solid #f1f5f9; }
         ::-webkit-scrollbar-thumb:hover { background: #0f172a; }
+
+        .animate-shake {
+          animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+          10%, 90% { transform: translate3d(-1px, 0, 0); }
+          20%, 80% { transform: translate3d(2px, 0, 0); }
+          30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+          40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
     </style>
 <script type="importmap">
 {
@@ -64,10 +83,10 @@
     <div id="loading-screen">
         <div class="spinner"></div>
         <div class="relative">
-          <h2 class="text-3xl font-black text-blue-900 italic tracking-tighter">ቤጉ እንግዳ</h2>
-          <div class="h-1 w-full bg-yellow-500 mt-1 rounded-full"></div>
+          <h2 class="text-5xl font-black text-blue-900 italic tracking-tighter drop-shadow-lg">ቤጉ እንግዳ</h2>
+          <div class="h-2 w-full bg-yellow-500 mt-2 rounded-full shadow-md"></div>
         </div>
-        <p class="text-slate-400 text-[10px] mt-4 font-black uppercase tracking-[0.4em]">Benishangul Gumuz Police Commission</p>
+        <p class="text-slate-400 text-[11px] mt-6 font-black uppercase tracking-[0.5em] opacity-80">Benishangul Gumuz Police Commission</p>
     </div>
 
     <div id="root"></div>

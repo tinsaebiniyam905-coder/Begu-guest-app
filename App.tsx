@@ -1,13 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import Layout from './components/Layout.tsx';
-import ReceptionView from './components/ReceptionView.tsx';
-import PoliceView from './components/PoliceView.tsx';
-import SettingsView from './components/SettingsView.tsx';
-import SetupView from './components/SetupView.tsx';
-import { User, Guest, AppView, Language, WantedPerson, translations } from './types.ts';
-import { analyzeSecurityRisk } from './services/gemini.ts';
-import { Shield, ShieldCheck, Globe } from 'lucide-react';
+import Layout from './components/Layout';
+import ReceptionView from './components/ReceptionView';
+import PoliceView from './components/PoliceView';
+import SettingsView from './components/SettingsView';
+import SetupView from './components/SetupView';
+import { User, Guest, AppView, Language, WantedPerson, translations } from './types';
+import { analyzeSecurityRisk } from './services/gemini';
+import { Shield, ShieldCheck, Globe, AlertCircle } from 'lucide-react';
 
 const App: React.FC = () => {
   const [lang, setLang] = useState<Language>(() => (localStorage.getItem('begu_lang') as Language) || 'am');
@@ -24,8 +24,8 @@ const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>(() => {
     const saved = localStorage.getItem('begu_users');
     return saved ? JSON.parse(saved) : [
-      { username: 'reception', password: '1234', role: 'RECEPTION', hotelName: '' },
-      { username: 'police', password: 'police@1234', role: 'POLICE' }
+      { username: 'reception', password: '123', role: 'RECEPTION', hotelName: '' },
+      { username: 'police', password: '123', role: 'POLICE' }
     ];
   });
 
@@ -56,7 +56,7 @@ const App: React.FC = () => {
       }
       setLoginError('');
     } else {
-      setLoginError(lang === 'am' ? 'ስህተት ተፈጥሯል!' : 'Invalid credentials!');
+      setLoginError(lang === 'am' ? 'ስህተት፡ ተጠቃሚ ስም ወይም የይለፍ ቃል አልተገኘም!' : 'Invalid credentials!');
     }
   };
 
@@ -65,10 +65,10 @@ const App: React.FC = () => {
     const id = Math.random().toString(36).substr(2, 9);
     const now = new Date();
     
-    // Automatic matching logic
+    // Automatic Wanted Matching Logic (Immediate & Invisible to Reception permission)
     const isWantedMatch = wantedList.some(w => 
-      newGuestData.fullName.toLowerCase().includes(w.name.toLowerCase()) || 
-      w.name.toLowerCase().includes(newGuestData.fullName.toLowerCase())
+      newGuestData.fullName.toLowerCase().trim() === w.name.toLowerCase().trim() ||
+      newGuestData.idNumber.trim() === w.id.trim() // Assuming ID might match
     );
 
     const newGuest: Guest = {
@@ -82,7 +82,12 @@ const App: React.FC = () => {
 
     setGuests(prev => [newGuest, ...prev]);
 
-    // AI Analysis
+    // Force Police Alert if Match
+    if (isWantedMatch) {
+       // In a real networked app, this would be a socket notification
+       console.warn("WANTED PERSON AUTOMATICALLY FLAGGED IN SYSTEM");
+    }
+
     try {
       const analysis = await analyzeSecurityRisk(newGuest);
       setGuests(prev => prev.map(g => g.id === id ? { ...g, aiAnalysis: analysis } : g));
@@ -94,7 +99,7 @@ const App: React.FC = () => {
       ...person,
       id: Math.random().toString(36).substr(2, 9),
       postedDate: new Date().toLocaleDateString(),
-      postedBy: user?.username || 'POLICE'
+      postedBy: user?.username || 'POLICE_HQ'
     };
     setWantedList(prev => [newW, ...prev]);
   };
@@ -104,23 +109,46 @@ const App: React.FC = () => {
 
   if (view === 'login') {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-        <div className="w-full max-w-md bg-white rounded-[4rem] shadow-2xl p-12 space-y-8 relative overflow-hidden border-t-8 border-yellow-500">
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6 relative overflow-hidden">
+        {/* Decorative Background Elements */}
+        <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-blue-800/20 rounded-full blur-[150px]"></div>
+        <div className="absolute bottom-[-10%] left-[-20%] w-[60%] h-[60%] bg-blue-800/10 rounded-full blur-[150px]"></div>
+
+        <div className="w-full max-w-lg bg-white rounded-[5rem] shadow-[0_50px_150px_rgba(0,0,0,0.6)] p-16 space-y-12 relative overflow-hidden border-t-[12px] border-yellow-500 animate-in zoom-in duration-1000">
           <div className="text-center">
-            <div className="w-24 h-24 bg-blue-900 rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-2xl rotate-3">
-               <ShieldCheck className="w-12 h-12 text-white" />
+            <div className="w-36 h-36 bg-gradient-to-br from-blue-900 to-blue-950 rounded-[3rem] flex items-center justify-center mx-auto mb-10 shadow-2xl rotate-3 border-4 border-yellow-500/40 relative group">
+               <ShieldCheck className="w-20 h-20 text-white group-hover:scale-110 transition-transform duration-700" />
+               <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-[3rem]"></div>
             </div>
-            <h1 className="text-5xl font-black text-slate-900 tracking-tighter italic">{t.title}</h1>
-            <p className="text-blue-900 font-black uppercase text-[10px] tracking-[0.3em] mt-2">B.G. Police Commission</p>
+            <h1 className="text-6xl font-black text-slate-900 tracking-tighter italic mb-3">{t.title}</h1>
+            <p className="text-blue-900 font-black uppercase text-[11px] tracking-[0.5em] mb-6 drop-shadow-sm">{t.commission}</p>
+            <div className="h-2 w-24 bg-yellow-500 mx-auto rounded-full shadow-lg"></div>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-6">
-            <input type="text" required placeholder={t.username} className="w-full bg-slate-50 border-2 rounded-3xl px-6 py-5 font-bold outline-none focus:border-blue-900" value={authForm.username} onChange={e => setAuthForm(p => ({...p, username: e.target.value}))} />
-            <input type="password" required placeholder={t.password} className="w-full bg-slate-50 border-2 rounded-3xl px-6 py-5 font-bold outline-none focus:border-blue-900" value={authForm.password} onChange={e => setAuthForm(p => ({...p, password: e.target.value}))} />
-            {loginError && <p className="text-red-600 text-xs font-black text-center">{loginError}</p>}
-            <button type="submit" className="w-full bg-blue-900 text-white font-black py-5 rounded-3xl shadow-xl uppercase text-sm tracking-widest hover:bg-slate-900 transition-all">{t.login}</button>
+          <form onSubmit={handleLogin} className="space-y-8">
+            <div className="space-y-3">
+               <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] ml-6">{t.username}</label>
+               <input type="text" required className="w-full bg-slate-50 border-4 border-slate-100 rounded-[2.5rem] px-10 py-6 font-bold outline-none focus:border-blue-900 transition-all text-xl shadow-inner placeholder:text-slate-300" placeholder="User ID" value={authForm.username} onChange={e => setAuthForm(p => ({...p, username: e.target.value}))} />
+            </div>
+            <div className="space-y-3">
+               <label className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] ml-6">{t.password}</label>
+               <input type="password" required className="w-full bg-slate-50 border-4 border-slate-100 rounded-[2.5rem] px-10 py-6 font-bold outline-none focus:border-blue-900 transition-all text-xl shadow-inner placeholder:text-slate-300" placeholder="••••••••" value={authForm.password} onChange={e => setAuthForm(p => ({...p, password: e.target.value}))} />
+            </div>
+            {loginError && <div className="bg-red-50 text-red-600 p-6 rounded-3xl text-xs font-black text-center border-2 border-red-100 animate-shake flex items-center justify-center gap-2"><AlertCircle size={20}/> {loginError}</div>}
+            <button type="submit" className="w-full bg-blue-950 text-white font-black py-7 rounded-[2.5rem] shadow-[0_25px_50px_rgba(0,0,0,0.3)] uppercase text-base tracking-[0.4em] hover:bg-slate-900 hover:scale-[1.02] active:scale-95 transition-all mt-6 border-b-8 border-yellow-600">
+              {t.login}
+            </button>
           </form>
-          <button onClick={() => setLang(lang === 'am' ? 'en' : 'am')} className="w-full py-2 text-[10px] font-black uppercase tracking-widest text-slate-400">Change Language: {lang === 'am' ? 'English' : 'አማርኛ'}</button>
+          
+          <div className="pt-10 border-t-2 border-slate-50 flex flex-col items-center gap-6">
+             <button onClick={() => setLang(lang === 'am' ? 'en' : 'am')} className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-blue-900 transition-colors flex items-center gap-2">
+               <Globe size={18}/> {lang === 'am' ? 'Switch to English' : 'ወደ አማርኛ ቀይር'}
+             </button>
+             <div className="text-center px-6">
+                <p className="text-[11px] text-slate-300 font-black uppercase tracking-[0.3em] italic mb-1">"{t.motto}"</p>
+                <p className="text-[9px] text-slate-300 font-bold uppercase tracking-widest">{lang === 'am' ? 'በሰብዓዊነት ማገልገል - በጀግንነት መጠበቅ' : 'Serve with Humanity - Protect with Bravery'}</p>
+             </div>
+          </div>
         </div>
       </div>
     );
@@ -137,7 +165,7 @@ const App: React.FC = () => {
 
   return (
     <Layout user={user} lang={lang} onLogout={() => setView('login')} onSettings={() => setView('settings')}>
-      {view === 'reception' && <ReceptionView onAddGuest={addGuest} hotelName={user?.hotelName || ''} allGuests={guests} lang={lang} />}
+      {view === 'reception' && <ReceptionView onAddGuest={addGuest} hotelName={user?.hotelName || ''} allGuests={guests} wantedList={wantedList} lang={lang} />}
       {view === 'police' && <PoliceView guests={guests} wantedList={wantedList} onAddWanted={addWanted} onRemoveWanted={removeWanted} onFlagGuest={flagGuest} lang={lang} />}
       {view === 'settings' && <SettingsView currentUser={user} lang={lang} onUpdate={(d: any) => setUsers(prev => prev.map(u => u.username === user?.username ? {...u, ...d} : u))} setLang={setLang} onBack={() => setView(user?.role === 'POLICE' ? 'police' : 'reception')} />}
     </Layout>

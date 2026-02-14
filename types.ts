@@ -29,10 +29,11 @@ export interface Guest {
 export interface WantedPerson {
   id: string;
   name: string;
-  photo: string;
+  photos: string[];
   reason: string;
   postedDate: string;
   postedBy: string;
+  rank?: string;
 }
 
 export type AppView = 'login' | 'reception' | 'police' | 'settings' | 'setup';
@@ -45,6 +46,9 @@ export interface User {
   hotelName?: string;
   location?: string;
   language?: Language;
+  rank?: string;
+  fullName?: string;
+  address?: string;
 }
 
 export const translations = {
@@ -52,6 +56,7 @@ export const translations = {
     title: 'ቤጉ እንግዳ',
     subTitle: 'የቤንሻንጉል ጉምዝ ፖሊስ ሆቴል እንግዶች መቆጣጠሪያ',
     motto: 'በጀግንነት መጠበቅ፣ በሰብዓዊነት ማገልገል',
+    commission: 'የቤንሻንጉል ጉምዝ ክልል ፖሊስ ኮሚሽን',
     login: 'ይግቡ',
     username: 'ተጠቃሚ ስም',
     password: 'ይለፍ ቃል',
@@ -69,7 +74,7 @@ export const translations = {
     gender: 'ጾታ',
     phone: 'ስልክ ቁጥር',
     idNumber: 'መታወቂያ ቁጥር',
-    roomNumber: 'ክፍል ቁጥር',
+    roomNumber: 'የአልጋ ቁጥር',
     origin: 'የመጣበት ቦታ',
     purpose: 'የጉዞ ዓላማ',
     vehicle: 'መኪና ታርጋ',
@@ -88,12 +93,16 @@ export const translations = {
     print: 'አትም',
     officerSign: 'ተቆጣጣሪ ፖሊስ ስም እና ማዕረግ',
     signature: 'ፊርማ',
-    date: 'ቀን'
+    date: 'ቀን',
+    importance: 'የአፕሊኬሽኑ አስፈላጊነት፡ የሆቴል እንግዶችን መረጃ በዘመናዊ መንገድ በመያዝ የክልሉን ሰላምና ደህንነት ለማረጋገጥ ይረዳል።',
+    alertTitle: 'አስቸኳይ ማስጠንቀቂያ!',
+    alertMatch: 'ተፈላጊ ሰው ተገኝቷል'
   },
   en: {
     title: 'Begu Guest',
     subTitle: 'BG Police Hotel Guest Control System',
     motto: 'Protect with Bravery, Serve with Humanity',
+    commission: 'Benishangul Gumuz Region Police Commission',
     login: 'Login',
     username: 'Username',
     password: 'Password',
@@ -111,7 +120,7 @@ export const translations = {
     gender: 'Gender',
     phone: 'Phone Number',
     idNumber: 'ID Number',
-    roomNumber: 'Room Number',
+    roomNumber: 'Bed/Room Number',
     origin: 'Origin',
     purpose: 'Purpose of Visit',
     vehicle: 'Vehicle Plate',
@@ -130,6 +139,9 @@ export const translations = {
     print: 'Print',
     officerSign: 'Supervising Police Officer Name & Rank',
     signature: 'Signature',
-    date: 'Date'
+    date: 'Date',
+    importance: 'Application Importance: Digitalizes hotel guest records to ensure regional peace and security.',
+    alertTitle: 'URGENT SECURITY ALERT!',
+    alertMatch: 'Wanted Person Matched'
   }
 };
